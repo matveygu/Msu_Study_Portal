@@ -156,3 +156,21 @@ SECURE_HSTS_PRELOAD = not DEBUG
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
 X_FRAME_OPTIONS = 'DENY'
+
+# settings.py
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Получаем ALLOWED_HOSTS из переменных окружения
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = allowed_hosts_env.split(',')
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# Или так - для Render.com
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
