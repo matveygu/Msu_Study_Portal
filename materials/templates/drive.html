@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Диск — Материалы{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/drive.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="drive">
+    <!-- Top bar -->
+    <div class="drive-topbar">
+        <div class="drive-topbar-left">
+            <a class="drive-brand" href="{% url 'materials_drive_root' %}"><i class="fas fa-paperclip"></i> Диск</a>
+            <div class="drive-breadcrumb">
+                <a href="{% url 'materials_drive_root' %}">Мой диск</a>
+                {% for crumb in breadcrumbs %}
+                    <span class="sep">/</span>
+                    {% if forloop.last %}
+                        <span class="current">{{ crumb.name }}</span>
+                    {% else %}
+                        <a href="{% url 'materials_drive_folder' crumb.id %}">{{ crumb.name }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="drive-topbar-right">
+            <form method="get" class="drive-search" action="">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Поиск в диске">
+            </form>
+            <div class="drive-actions">
+                {% if can_manage %}
+                <button class="btn btn-new" data-bs-toggle="modal" data-bs-target="#createFolderModal">
+                    <i class="fas fa-folder-plus"></i>
+                    Новая папка
+                </button>
+                <a class="btn btn-upload" href="{% url 'upload_material' %}{% if current_folder %}?folder={{ current_folder.id }}{% endif %}">
+                    <i class="fas fa-upload"></i>
+                    Загрузить
+                </a>
+                {% endif %}
+                
+                <button class="btn btn-view" data-view="grid" id="btnGrid"><i class="fas fa-border-all"></i></button>
+                <button class="btn btn-view" data-view="list" id="btnList"><i class="fas fa-list"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="drive-body">
+        <!-- Sidebar -->
+        <aside class="drive-sidebar">
+            <a class="nav-item {% if not breadcrumbs %}active{% endif %}" href="{% url 'materials_drive_root' %}">
+                <i class="fas fa-hdd"></i> Мой диск
+            </a>
+            <div class="nav-section">Файлы и папки</div>
+            <div class="nav-subtle">Всего: {{ subfolders|length|add:materials|length }}</div>
+        </aside>
+
+        <!-- Content -->
+        <section class="drive-content">
+            <!-- Grid view -->
+            <div class="drive-grid" id="driveGrid">
+                {% for f in subfolders %}
+                <a class="tile tile-folder" href="{% url 'materials_drive_folder' f.id %}">
+                    <div class="tile-icon"><i class="fas fa-folder"></i></div>
+                    <div class="tile-name" title="{{ f.name }}">{{ f.name }}</div>
+                    <div class="tile-meta">Папка • {{ f.created_at|date:"d.m.Y" }}</div>
+                </a>
+                {% empty %}{% endfor %}
+
+                {% for m in materials %}
+                <div class="tile tile-file type-{{ m.type }}">
+                    <div class="tile-icon">
+                        {% if m.type == 'book' %}<i class="fas fa-book"></i>
+                        {% elif m.type == 'notes' %}<i class="fas fa-file-alt"></i>
+                        {% elif m.type == 'video' %}<i class="fas fa-video"></i>
+                        {% elif m.type == 'presentation' %}<i class="fas fa-chalkboard"></i>
+                        {% elif m.type == 'code' %}<i class="fas fa-code"></i>
+                        {% else %}<i class="fas fa-file"></i>{% endif %}
+                    </div>
+                    <div class="tile-name" title="{{ m.name }}">{{ m.name }}</div>
+                    <div class="tile-meta">{{ m.get_type_display }} • {{ m.upload_date|date:"d.m.Y" }}</div>
+                    <div class="tile-actions">
+                        <a class="btn btn-sm" href="{{ m.file.url }}" target="_blank"><i class="fas fa-download"></i></a>
+                        {% if can_manage %}
+                        <a class="btn btn-sm" href="{% url 'edit_material' m.id %}"><i class="fas fa-pen"></i></a>
+                        <form method="post" action="{% url 'delete_material' m.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm" onclick="return confirm('Удалить материал?')"><i class="fas fa-trash"></i></button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}{% endfor %}
+            </div>
+
+            <!-- List view -->
+            <div class="drive-list d-none" id="driveList">
+                <div class="list-head">
+                    <div>Название</div>
+                    <div>Тип</div>
+                    <div>Изменено</div>
+                    <div class="text-end">Действия</div>
+                </div>
+                {% for f in subfolders %}
+                <a class="list-row" href="{% url 'materials_drive_folder' f.id %}">
+                    <div><i class="fas fa-folder me-2 text-warning"></i>{{ f.name }}</div>
+                    <div>Папка</div>
+                    <div>{{ f.created_at|date:"d.m.Y" }}</div>
+                    <div></div>
+                </a>
+                {% empty %}{% endfor %}
+
+                {% for m in materials %}
+                <div class="list-row type-{{ m.type }}">
+                    <div>
+                        {% if m.type == 'book' %}<i class="fas fa-book me-2 text-success"></i>
+                        {% elif m.type == 'notes' %}<i class="fas fa-file-alt me-2 text-warning"></i>
+                        {% elif m.type == 'video' %}<i class="fas fa-video me-2 text-danger"></i>
+                        {% elif m.type == 'presentation' %}<i class="fas fa-chalkboard me-2 text-info"></i>
+                        {% elif m.type == 'code' %}<i class="fas fa-code me-2 text-secondary"></i>
+                        {% else %}<i class="fas fa-file me-2 text-muted"></i>{% endif %}
+                        {{ m.name }}
+                    </div>
+                    <div>{{ m.get_type_display }}</div>
+                    <div>{{ m.upload_date|date:"d.m.Y" }}</div>
+                    <div class="text-end">
+                        <a class="btn btn-outline-primary btn-sm" href="{% url 'download_material' m.id %}">Скачать</a>
+                        {% if can_manage %}
+                        <a class="btn btn-outline-secondary btn-sm" href="{% url 'edit_material' m.id %}">Изменить</a>
+                        <form method="post" action="{% url 'delete_material' m.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Удалить материал?')">Удалить</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}{% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Create folder modal -->
+    {% if can_manage %}
+    <div class="modal fade" id="createFolderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Новая папка</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% if current_folder %}{% url 'create_material_subfolder' current_folder.id %}{% else %}{% url 'create_material_folder' %}{% endif %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Название папки</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if current_folder and can_manage %}
+    <div class="mt-2 px-3">
+        <a href="{% url 'edit_material_folder' current_folder.id %}" class="btn btn-outline-secondary btn-sm">Переименовать папку</a>
+        <a href="{% url 'delete_material_folder' current_folder.id %}" class="btn btn-outline-danger btn-sm">Удалить папку</a>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var grid=document.getElementById('driveGrid');
+  var list=document.getElementById('driveList');
+  var btnGrid=document.getElementById('btnGrid');
+  var btnList=document.getElementById('btnList');
+  if(btnGrid){btnGrid.addEventListener('click',function(){list.classList.add('d-none');grid.classList.remove('d-none');});}
+  if(btnList){btnList.addEventListener('click',function(){grid.classList.add('d-none');list.classList.remove('d-none');});}
+
+  
+});
+</script>
+{% endblock %}
+
+

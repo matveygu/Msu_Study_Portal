@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ schedule.subject }} ({{ schedule.group }})</h2>
+    <p>Преподаватель: {{ schedule.teacher }}</p>
+    <p>Аудитория: {{ schedule.room }}</p>
+
+    <h3>Домашние задания:</h3>
+    {% for hw in homeworks %}
+        <div class="card p-2 mb-2">
+            <p><strong>Задано:</strong> {{ hw.assigned_date }}</p>
+            {% if hw.due_date %}
+                <p><strong>Сдать до:</strong> {{ hw.due_date }}</p>
+            {% endif %}
+            <p>{{ hw.content }}</p>
+            {% if hw.file %}
+                <a href="{{ hw.file.url }}" target="_blank">📎 Скачать файл</a>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Домашек пока нет.</p>
+    {% endfor %}
+
+    <a href="{% url 'add_homework' schedule.id %}" class="btn btn-primary mt-3">Добавить домашку</a>
+</div>
+{% endblock %}

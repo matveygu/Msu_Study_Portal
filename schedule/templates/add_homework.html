@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Добавить домашнее задание</h2>
+    <p><strong>Пара:</strong> {{ schedule.subject }} ({{ schedule.group }})</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'schedule_detail' schedule.id %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

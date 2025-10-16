@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Удалить папку — {{ folder.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+          <h5>Удалить папку</h5>
+        </div>
+        <div class="card-body">
+          <p>Вы уверены, что хотите удалить папку "<strong>{{ folder.name }}</strong>"?
+             Все материалы внутри будут также удалены.</p>
+          <form method="post">
+            {% csrf_token %}
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-danger">Удалить</button>
+              {% if parent_id %}
+              <a href="{% url 'materials_drive_folder' parent_id %}" class="btn btn-secondary">Отмена</a>
+              {% else %}
+              <a href="{% url 'materials_drive_root' %}" class="btn btn-secondary">Отмена</a>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

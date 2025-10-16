@@ -1,0 +1,50 @@
+/* Base styles */
+.navbar-brand {
+    font-weight: bold;
+    color: #0039a6 !important;
+}
+
+.bg-msu {
+    background-color: #0039a6;
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card-hover:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s;
+}
+
+.news-card {
+    border-left: 4px solid #0039a6;
+}
+
+.quick-action {
+    transition: all 0.3s;
+}
+
+.quick-action:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.05);
+}
+
+/* Footer styles */
+footer.bg-dark {
+    margin-top: auto;
+}
+
+/* Ensure proper spacing */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}

@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - МГУ ВМК{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Основной контент -->
+    <div class="col-lg-8">
+        <!-- Приветствие -->
+        <div class="card mb-4">
+            <div class="card-body text-center welcome-card">
+                <h2>Добро пожаловать, {{ user.first_name }}! 👋</h2>
+                <p class="text-light-muted">Факультет: {{ user.faculty }} | Курс: {{ user.course }} | Группа: {{ user.group.name }}</p>
+                <p class="text-light-muted">Сегодня: {{ today|date:"d.m.Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Ближайшие пары сегодня -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4><i class="fas fa-calendar-day"></i> Пары на сегодня</h4>
+            </div>
+            <div class="card-body">
+                {% if today_schedule %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Время</th>
+                                <th>Предмет</th>
+                                <th>Преподаватель</th>
+                                <th>Аудитория</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lesson in today_schedule %}
+                            <tr>
+                                <td class="fw-bold">{{ lesson.time }}</td>
+                                <td>
+                                    <div class="fw-bold">{{ lesson.subject.name }}</div>
+                                    <small class="text-muted">{{ lesson.lesson_number }} пара</small>
+                                </td>
+                                <td>{{ lesson.subject.teacher.get_full_name }}</td>
+                                <td>{{ lesson.classroom }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">На сегодня пар нет 🎉</p>
+                </div>
+                {% endif %}
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'schedule' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-calendar-alt"></i> Полное расписание
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Новости и объявления -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-newspaper"></i> Новости и объявления</h4>
+                {% if user.role in 'admin teacher' %}
+                <a href="{% url 'add_news' %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Добавить новость
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% for news in page_obj %}
+                <div class="news-card card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">
+                                    {{ news.title }}
+                                    <span class="badge
+                                        {% if news.category == 'news' %}bg-primary
+                                        {% elif news.category == 'announcement' %}bg-warning
+                                        {% else %}bg-success{% endif %}">
+                                        {{ news.get_category_display }}
+                                    </span>
+                                </h5>
+                                <p class="card-text">{{ news.content }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user"></i> {{ news.author.get_full_name }}
+                                        <i class="fas fa-clock ms-2"></i> {{ news.created_at|date:"d.m.Y H:i" }}
+                                    </small>
+                                    {% if user.role in 'admin teacher' and user == news.author or user.role == 'admin' %}
+                                    <div class="btn-group btn-group-sm">
+                                        {% if news.file %}
+                                        <div class="mt-2">
+                                        <a href="{{ news.file.url }}"
+                                           class="btn btn-sm btn-outline-primary download-btn"
+                                           target="_blank">
+                                            <i class="fas fa-file-download"></i>
+                                        </a>
+                                        </div>
+                                        {% endif %}
+                                        <a href="{% url 'edit_news' news.id %}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{% url 'delete_news' news.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Удалить это новость?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if news.file %}
+                            <div class="ms-3">
+                                <img src="{{ news.file.url }}" alt="{{ news.title }}"
+                                     class="img-fluid rounded" style="max-width: 120px;">
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">
+                    <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Новостей пока нет</p>
+                    {% if user.role in 'admin teacher' %}
+                    <a href="{% url 'add_news' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Добавить первую новость
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <!-- Пагинация -->
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Навигация по новостям">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперед</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="col-lg-4">
+        <!-- Быстрый доступ -->
+        <div class="row mb-4">
+            <div class="col-6 mb-3">
+                <a href="{% url 'schedule' %}" class="card quick-action text-decoration-none text-center">
+                    <div class="card-body">
+                        <i class="fas fa-calendar-alt fa-2x text-primary mb-2"></i>
+                        <h6>Расписание</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 mb-3">
+                <a href="{% url 'materials' %}" class="card quick-action text-decoration-none text-center">
+                    <div class="card-body">
+                        <i class="fas fa-book fa-2x text-success mb-2"></i>
+                        <h6>Материалы</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 mb-3">
+                <a href="{% url 'profile' %}" class="card quick-action text-decoration-none text-center">
+                    <div class="card-body">
+                        <i class="fas fa-user fa-2x text-info mb-2"></i>
+                        <h6>Профиль</h6>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 mb-3">
+                <a href="https://mail.msu.ru" class="card quick-action text-decoration-none text-center" target="_blank">
+                    <div class="card-body">
+                        <i class="fas fa-envelope fa-2x text-warning mb-2"></i>
+                        <h6>Почта</h6>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Полезные ссылки -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-link"></i> Полезные ссылки</h5>
+            </div>
+            <div class="card-body useful-links">
+                <div class="list-group">
+                    <a href="https://www.msu.ru" class="list-group-item list-group-item-action" target="_blank">
+                        <i class="fas fa-globe"></i> Официальный сайт МГУ
+                    </a>
+                    <a href="https://webanketa.msu.ru" class="list-group-item list-group-item-action" target="_blank">
+                        <i class="fas fa-user-graduate"></i> Абитуриенту МГУ
+                    </a>
+                    <a href="https://library.msu.ru" class="list-group-item list-group-item-action" target="_blank">
+                        <i class="fas fa-book-open"></i> Библиотека МГУ
+                    </a>
+                    <a href="https://edu.msu.ru" class="list-group-item list-group-item-action" target="_blank">
+                        <i class="fas fa-graduation-cap"></i> Портал дистанционного обучения
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar"></i> Статистика</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="h4 text-primary mb-1">{{ page_obj.paginator.count }}</div>
+                        <small class="text-muted">Новостей</small>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="h4 text-success mb-1">{{ today_schedule|length }}</div>
+                        <small class="text-muted">Пар сегодня</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
