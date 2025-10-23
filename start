@@ -1,0 +1,4 @@
+python manage.py makemigrations
+python manage.py migrate
+python manage.py import_schedule --creds=service-account.json --sheet-id=19AxVy3prR6Ee0i3ek9l3JQZ1nQ4IUircFANF5pBfNGg  --faculty="ВМК"
+python manage.py runserver

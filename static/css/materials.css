@@ -1,0 +1,250 @@
+/* Materials page specific styles */
+.materials-container {
+    max-width: 1400px;
+}
+
+.materials-sidebar {
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    padding: 1.5rem;
+    height: fit-content;
+}
+
+.materials-sidebar .card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-bottom: 1.5rem;
+}
+
+.materials-sidebar .card-header {
+    background: linear-gradient(135deg, #0039a6 0%, #0053b3 100%);
+    color: white !important;
+    border-radius: 12px 12px 0 0 !important;
+    border: none;
+    padding: 1rem 1.25rem;
+}
+
+.materials-sidebar .card-header h5 {
+    font-weight: 500;
+    margin: 0;
+    font-size: 1.1em;
+    color: white !important;
+}
+
+.materials-sidebar .list-group-item {
+    border: none;
+    border-left: 3px solid transparent;
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    color: #495057;
+    text-decoration: none;
+}
+
+.materials-sidebar .list-group-item:hover {
+    background-color: #e9ecef;
+    border-left-color: #0039a6;
+    color: #0039a6;
+    text-decoration: none;
+}
+
+.materials-sidebar .list-group-item.active {
+    background-color: #0039a6;
+    border-left-color: #002776;
+    color: white;
+}
+
+.materials-content {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.materials-content .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.5rem;
+}
+
+.materials-content .card-header h4 {
+    color: #2c3e50;
+    font-weight: 500;
+    margin: 0;
+}
+
+.breadcrumb-container {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb-item {
+    font-size: 0.9em;
+}
+
+.breadcrumb-item a {
+    color: #0039a6;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+}
+
+.material-item {
+    border: none;
+    border-left: 4px solid transparent;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.material-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.material-book {
+    border-left-color: #28a745;
+}
+
+.material-notes {
+    border-left-color: #ffc107;
+}
+
+.material-video {
+    border-left-color: #dc3545;
+}
+
+.material-other {
+    border-left-color: #6c757d;
+}
+
+.material-icon {
+    font-size: 1.2em;
+    margin-right: 0.5rem;
+}
+
+.material-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.material-meta {
+    color: #6c757d;
+    font-size: 0.85em;
+}
+
+.material-date {
+    font-size: 0.8em;
+    color: #adb5bd;
+}
+
+.download-btn {
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.download-btn:hover {
+    transform: translateY(-1px);
+}
+
+.upload-btn {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #dee2e6;
+}
+
+.empty-state h5 {
+    color: #adb5bd;
+    margin-bottom: 0.5rem;
+}
+
+/* Folder hierarchy styles */
+.folder-hierarchy {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.folder-level {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.folder-icon {
+    color: #ffc107;
+    margin-right: 0.5rem;
+}
+
+.folder-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.folder-separator {
+    color: #adb5bd;
+    margin: 0 0.5rem;
+}
+
+/* Responsive design */
+@media (max-width: 992px) {
+    .materials-sidebar {
+        margin-bottom: 2rem;
+    }
+
+    .material-item {
+        padding: 1rem;
+    }
+
+    .download-btn {
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .materials-content .card-header {
+        padding: 1rem;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.8em;
+    }
+
+    .material-item {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .material-actions {
+        margin-top: 0.5rem;
+        align-self: flex-start;
+    }
+}

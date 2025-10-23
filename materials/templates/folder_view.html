@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Материалы - {{ current_folder }} - МГУ ВМК{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/materials.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container materials-container mt-4">
+    <div class="row">
+        <!-- Боковая панель навигации -->
+        <div class="col-lg-3">
+            <div class="materials-sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📁 Факультеты</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for fac in faculties %}
+                        <a href="{% url 'faculty_materials' fac %}"
+                           class="list-group-item {% if current_faculty == fac %}active{% endif %}">
+                            {{ fac }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if current_faculty %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📘 Курсы</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for crs in courses %}
+                        <a href="{% url 'course_materials' current_faculty crs %}"
+                           class="list-group-item {% if current_course == crs %}active{% endif %}">
+                            {{ crs }} курс
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if current_faculty and current_course %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5>📚 Предметы</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        {% for subj in subjects %}
+                        <a href="{% url 'subject_materials' current_faculty current_course subj %}"
+                           class="list-group-item {% if current_subject == subj %}active{% endif %}">
+                            {{ subj }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if user.role in 'headman teacher admin' %}
+                <div class="text-center">
+                    <a href="{% url 'upload_material' %}" class="btn upload-btn w-100">
+                        <i class="fas fa-upload"></i> Загрузить материал
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Основное содержимое -->
+        <div class="col-lg-9">
+            <div class="materials-content card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4>
+                            <i class="fas fa-folder-open"></i>
+                            {% if current_type %}
+                                {{ current_type }}
+                            {% elif current_subject %}
+                                {{ current_subject }}
+                            {% elif current_course %}
+                                {{ current_course }} курс
+                            {% elif current_faculty %}
+                                {{ current_faculty }}
+                            {% else %}
+                                Учебные материалы
+                            {% endif %}
+                        </h4>
+                        <span class="badge bg-primary">{{ materials|length }} материалов</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Хлебные крошки -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-container">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'materials' %}">Материалы</a>
+                            </li>
+                            {% if current_faculty %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'faculty_materials' current_faculty %}">{{ current_faculty }}</a>
+                            </li>
+                            {% endif %}
+                            {% if current_course %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'course_materials' current_faculty current_course %}">{{ current_course }} курс</a>
+                            </li>
+                            {% endif %}
+                            {% if current_subject %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'subject_materials' current_faculty current_course current_subject %}">{{ current_subject }}</a>
+                            </li>
+                            {% endif %}
+                            {% if current_type %}
+                            <li class="breadcrumb-item active">{{ current_type }}</li>
+                            {% endif %}
+                        </ol>
+                    </nav>
+
+                    <!-- Иерархия папок -->
+                    <div class="folder-hierarchy">
+                        <div class="folder-level">
+                            <i class="fas fa-folder folder-icon"></i>
+                            <span class="folder-name">Материалы</span>
+                        </div>
+                        {% if current_faculty %}
+                        <div class="folder-level">
+                            <span class="folder-separator">→</span>
+                            <i class="fas fa-folder folder-icon"></i>
+                            <span class="folder-name">{{ current_faculty }}</span>
+                        </div>
+                        {% endif %}
+                        {% if current_course %}
+                        <div class="folder-level">
+                            <span class="folder-separator">→</span>
+                            <i class="fas fa-folder folder-icon"></i>
+                            <span class="folder-name">{{ current_course }} курс</span>
+                        </div>
+                        {% endif %}
+                        {% if current_subject %}
+                        <div class="folder-level">
+                            <span class="folder-separator">→</span>
+                            <i class="fas fa-folder folder-icon"></i>
+                            <span class="folder-name">{{ current_subject }}</span>
+                        </div>
+                        {% endif %}
+                        {% if current_type %}
+                        <div class="folder-level">
+                            <span class="folder-separator">→</span>
+                            <i class="fas fa-folder folder-icon"></i>
+                            <span class="folder-name">{{ current_type }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Список материалов -->
+                    {% if materials %}
+                    <div class="list-group">
+                        {% for material in materials %}
+                        <div class="list-group-item material-item material-{{ material.type }}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center">
+                                        {% if material.type == 'book' %}
+                                        <i class="fas fa-book material-icon text-success"></i>
+                                        {% elif material.type == 'notes' %}
+                                        <i class="fas fa-file-alt material-icon text-warning"></i>
+                                        {% elif material.type == 'video' %}
+                                        <i class="fas fa-video material-icon text-danger"></i>
+                                        {% else %}
+                                        <i class="fas fa-file material-icon text-secondary"></i>
+                                        {% endif %}
+                                        <h6 class="material-name mb-1">{{ material.name }}</h6>
+                                    </div>
+                                    <div class="material-meta">
+                                        <span class="badge bg-light text-dark">{{ material.get_type_display }}</span>
+                                        <span class="mx-2">•</span>
+                                        <span>{{ material.subject }}</span>
+                                        <span class="mx-2">•</span>
+                                        <span>Загружено: {{ material.upload_date|date:"d.m.Y" }}</span>
+                                        <span class="mx-2">•</span>
+                                        <span>Автор: {{ material.uploaded_by.get_full_name }}</span>
+                                    </div>
+                                </div>
+                                <div class="material-actions">
+                                    <a href="{% url 'download_material' material.id %}"
+                                       class="btn download-btn btn-outline-primary">
+                                        <i class="fas fa-download"></i> Скачать
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <h5>Папка пуста</h5>
+                        <p>В этой папке пока нет материалов</p>
+                        {% if user.role in 'headman teacher admin' %}
+                        <a href="{% url 'upload_material' %}" class="btn btn-primary mt-2">
+                            <i class="fas fa-upload"></i> Загрузить первый материал
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>

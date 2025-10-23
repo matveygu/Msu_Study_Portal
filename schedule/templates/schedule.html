@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Расписание - МГУ ВМК{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/schedule.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container schedule-container mt-4">
+    <div class="card">
+        <div class="card-header schedule-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>Расписание занятий - {{ user.group.name }}</h4>
+                <span class="badge bg-primary">Курс: {{ user.course }}</span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Навигация по неделям -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="?date={{ previous_week }}" class="btn btn-outline-primary">
+                            ← Предыдущая неделя
+                        </a>
+                        <h5 class="mb-0">Неделя {{ week_dates.0|date:"d.m" }} - {{ week_dates.6|date:"d.m" }}</h5>
+                        <a href="?date={{ next_week }}" class="btn btn-outline-primary">
+                            Следующая неделя →
+                        </a>
+                    </div>
+
+                    <!-- Дни недели -->
+                    <div class="nav nav-pills justify-content-center mt-3 day-nav-pills">
+                        {% for week_date in week_dates %}
+                        <a class="nav-link {% if week_date == current_date %}active{% endif %}"
+                           href="?date={{ week_date|date:'Y-m-d' }}">
+                            {{ week_date|date:"l" }}<br>
+                            <small>{{ week_date|date:"d.m" }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            {% if error %}
+            <div class="alert alert-warning">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- Расписание на день -->
+            <div class="table-responsive">
+                <table class="table table-hover schedule-table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 10%">№ пары</th>
+                            <th style="width: 15%">Время</th>
+                            <th style="width: 35%">Предмет / Преподаватель / Аудитория</th>
+                            <th style="width: 40%">Домашнее задание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lesson in schedule %}
+                        <tr>
+                            <td class="fw-bold lesson-number">{{ lesson.lesson_number }}</td>
+                            <td class="lesson-time">{{ lesson.time }} - {{ lesson.time_end }}</td>
+                            <td>
+                                <div class="fw-bold lesson-subject">{{ lesson.subject.name }}</div>
+                                {% if lesson.first_teacher_name != "No Teacher" %}
+                                <div class="text-muted small">
+                                Преподаватели:
+                                {% if lesson.first_teacher_id %}{{ lesson.first_teacher_name }}{% endif %}
+                                {% if lesson.second_teacher_id %} / {{ lesson.second_teacher_name }}{% endif %}
+                                </div>
+                                {% endif %}
+                                {% if lesson.classroom %}
+                                <div class="text-muted small">
+                                    Аудитории: {{ lesson.classroom }}
+                                    {% if lesson.another_classroom %} / {{ lesson.another_classroom }}{% endif %}
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% for dz in homework %}
+                                {% if dz.content and dz.schedule_id == lesson.id %}
+                                <div class="homework-content">
+                                    <div class="homework-text">{{ dz.content }}</div>
+
+                                    {% if dz.file %}
+                                    <div class="mt-2">
+                                        <a href="{{ dz.file.url }}"
+                                           class="btn btn-sm btn-outline-primary download-btn"
+                                           target="_blank">
+                                            <i class="fas fa-file-download"></i> Скачать файл
+                                        </a>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if dz.due_date %}
+                                    <small class="text-muted d-block mt-1">
+                                        Срок сдачи: {{ dz.due_date|date:"d.m.Y" }}
+                                    </small>
+                                    {% endif %}
+
+                                    <small class="text-muted d-block mt-1">
+                                        Задано: {{ dz.assigned_date|date:"d.m.Y" }}
+                                    </small>
+
+                                    {% if user.role in 'headman teacher admin' %}
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-outline-warning"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editHomeworkModal{{ lesson.id }}">
+                                            <i class="fas fa-edit"></i> Редактировать
+                                        </button>
+                                        <form method="post" action="{% url 'delete_homework' dz.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Удалить это домашнее задание?')">
+                                                <i class="fas fa-trash"></i> Удалить
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+
+                                {% if user.role in 'headman teacher admin' %}
+                                <a href="{% url 'add_homework' lesson.id %}" class="btn btn-sm btn-outline-success mt-2">
+                                    <i class="fas fa-plus"></i> Добавить ДЗ
+                                </a>
+                                {% else %}
+                                    {% if not homework or not homework|length %}
+                                    <span class="text-muted">ДЗ не задано</span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 no-lessons">
+                                <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                                <p>Занятий на этот день нет 🎉</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Автоматическое закрытие модальных окон после отправки формы
+document.addEventListener('DOMContentLoaded', function() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function() {
+            const form = this.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    setTimeout(() => {
+                        modalInstance.hide();
+                    }, 500);
+                });
+            }
+        });
+    });
+});
+
+// Подтверждение удаления ДЗ
+function confirmDelete(event) {
+    if (!confirm('Вы уверены, что хотите удалить это домашнее задание?')) {
+        event.preventDefault();
+    }
+}
+
+// Установка даты сдачи при выборе из кнопок недели
+function setDueDate(date, fieldId) {
+    const dateField = document.getElementById(fieldId);
+    if (dateField) {
+        dateField.value = date;
+
+        // Визуальная обратная связь
+        const buttons = document.querySelectorAll('.date-option-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('btn-primary', 'active');
+            btn.classList.add('btn-outline-primary');
+        });
+
+        event.target.classList.remove('btn-outline-primary');
+        event.target.classList.add('btn-primary', 'active');
+
+        // Показываем уведомление
+        showTempAlert(`Дата установлена: ${formatDateForDisplay(date)}`, 'success');
+    }
+}
+
+// Форматирование даты для отображения
+function formatDateForDisplay(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+}
+
+// Временное уведомление
+function showTempAlert(message, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.querySelector('.modal-body').prepend(alertDiv);
+
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 3000);
+}
+
+// Автоматическая установка даты при открытии модального окна
+document.addEventListener('DOMContentLoaded', function() {
+    const modalElements = document.querySelectorAll('.modal');
+    modalElements.forEach(modal => {
+        modal.addEventListener('show.bs.modal', function() {
+            const dateField = this.querySelector('input[type="date"]');
+            if (dateField && !dateField.value) {
+                // Устанавливаем текущую дату по умолчанию
+                const today = new Date().toISOString().split('T')[0];
+                dateField.value = today;
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.date-option-btn {
+    text-align: left;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+.date-option-btn:hover {
+    transform: translateX(5px);
+}
+
+.date-option-btn.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+.homework-content {
+    border-left: 3px solid #0d6efd;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+</style>
+{% endblock %}

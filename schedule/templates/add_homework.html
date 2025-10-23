@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Добавить домашнее задание - МГУ ВМК{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/schedule.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Добавить домашнее задание</h2>
+    <p class="lead">{{ schedule.subject }} ({{ schedule.group }})</p>
+    
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        
+        <!-- Homework Content -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Текст задания</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <textarea name="content" id="id_content" class="form-control" rows="4" 
+                              placeholder="Введите текст задания..." required>{% if homework %}{{ homework.first.content }}{% endif %}</textarea>
+                    <div class="form-text">Опишите задание подробно</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Upload -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Файл (необязательно)</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <input type="file" name="file" id="id_file" class="form-control">
+                    <div class="form-text">Максимальный размер: 10MB</div>
+                    
+                    {% for dz in homework %}
+                        {% if dz.schedule_id == schedule.id and dz.file %}
+                        <div class="mt-2">
+                            <div class="alert alert-info p-2">
+                                <i class="fas fa-paperclip me-2"></i>
+                                Текущий файл: 
+                                <a href="{{ dz.file.url }}" target="_blank" class="text-decoration-none">
+                                    {{ dz.file.name|slice:":30" }}{% if dz.file.name|length > 30 %}...{% endif %}
+                                </a>
+                                <a href="#" class="text-danger ms-2" onclick="return confirmDeleteFile()">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Due Date Selection -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Срок сдачи</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="id_due_date" class="form-label">Дата сдачи</label>
+                    <input type="date" name="due_date" id="id_due_date" class="form-control"
+                           value="{% if homework %}{{ homework.first.due_date|date:'Y-m-d' }}{% else %}{{ current_date|date:'Y-m-d' }}{% endif %}" required>
+                </div>
+
+                <div class="mt-4 mb-2">
+                    <p class="mb-2"><strong>Или выберите из недели:</strong></p>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for week_date in week_dates %}
+                        <button type="button" class="btn btn-outline-primary date-option"
+                                onclick="document.getElementById('id_due_date').value='{{ week_date|date:'Y-m-d' }}'">
+                            {{ week_date|date:"D" }}, {{ week_date|date:"d.m" }}
+                            {% if week_date == current_date %}
+                            <span class="badge bg-success ms-1">СЕГОДНЯ</span>
+                            {% endif %}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="text-muted small mt-3">
+                    <i class="far fa-calendar-alt me-1"></i>
+                    Текущая неделя: {{ week_dates.0|date:"d.m" }} - {{ week_dates.6|date:"d.m.Y" }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'schedule_detail' schedule.id %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Назад
+            </a>
+            <div>
+                <button type="reset" class="btn btn-outline-warning me-2">
+                    <i class="fas fa-undo me-1"></i> Сбросить
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Сохранить задание
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript for additional functionality -->
+<script>
+// Confirm before deleting a file
+function confirmDeleteFile() {
+    if (confirm('Вы уверены, что хотите удалить прикрепленный файл?')) {
+        // Add logic to handle file deletion
+        return true;
+    }
+    return false;
+}
+
+// Form validation
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}

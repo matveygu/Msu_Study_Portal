@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Учебные материалы - МГУ ВМК{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Боковая панель навигации -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Факультеты</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="{% url 'faculty_materials' 'ВМК' %}" class="text-decoration-none">
+                                📁 Факультет ВМК
+                            </a>
+                            {% if current_faculty == 'ВМК' %}
+                            <ul class="list-group mt-2">
+                                {% for course in courses %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'course_materials' 'ВМК' course %}" class="text-decoration-none">
+                                        📘 {{ course }} курс
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'faculty_materials' 'Мехмат' %}" class="text-decoration-none">
+                                📁 Мехмат
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'faculty_materials' 'Физфак' %}" class="text-decoration-none">
+                                📁 Физфак
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if user.role in 'headman teacher admin' %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <a href="{% url 'upload_material' %}" class="btn btn-success btn-sm">
+                        📤 Загрузить материал
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h4>
+                        {% if current_faculty %}
+                            {{ current_faculty }}
+                            {% if current_course %} - {{ current_course }} курс{% endif %}
+                            {% if current_subject %} - {{ current_subject }}{% endif %}
+                            {% if current_type %} - {{ current_type }}{% endif %}
+                        {% else %}
+                            Учебные материалы
+                        {% endif %}
+                    </h4>
+                </div>
+
+                <div class="card-body">
+                    <!-- Хлебные крошки -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'materials' %}">Материалы</a>
+                            </li>
+                            {% if current_faculty %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'faculty_materials' current_faculty %}">{{ current_faculty }}</a>
+                            </li>
+                            {% endif %}
+                            {% if current_course %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'course_materials' current_faculty current_course %}">{{ current_course }} курс</a>
+                            </li>
+                            {% endif %}
+                            {% if current_subject %}
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'subject_materials' current_faculty current_course current_subject %}">{{ current_subject }}</a>
+                            </li>
+                            {% endif %}
+                        </ol>
+                    </nav>
+
+                    <!-- Список материалов -->
+                    <div class="list-group">
+                        {% for material in materials %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">
+                                        {% if material.type == 'book' %}📚
+                                        {% elif material.type == 'notes' %}📝
+                                        {% elif material.type == 'video' %}🎥
+                                        {% else %}📄{% endif %}
+                                        {{ material.name }}
+                                    </h6>
+                                    <small class="text-muted">
+                                        {{ material.subject }} | {{ material.get_type_display }} |
+                                        Загружено: {{ material.upload_date|date:"d.m.Y" }}
+                                    </small>
+                                </div>
+                                <div>
+                                    <a href="{% url 'download_material' material.id %}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        📥 Скачать
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4">
+                            <p>Материалы не найдены</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>

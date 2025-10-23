@@ -1,0 +1,87 @@
+.drive{display:flex;flex-direction:column;gap:0}
+.drive-topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border:1px solid #e9ecef;border-radius:8px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.drive-topbar-left{display:flex;align-items:center;gap:16px}
+.drive-brand{font-weight:600;color:#0d6efd;text-decoration:none}
+.drive-breadcrumb{color:#6c757d}
+.drive-breadcrumb a{color:#6c757d;text-decoration:none}
+.drive-breadcrumb a:hover{color:#0d6efd}
+.drive-breadcrumb .sep{margin:0 8px;color:#ced4da}
+.drive-breadcrumb .current{color:#212529;font-weight:500}
+.drive-topbar-right{display:flex;align-items:center;gap:12px}
+.drive-search{display:flex;align-items:center;gap:8px;border:1px solid #dee2e6;border-radius:20px;padding:4px 10px;min-width:280px;background:#fff}
+.drive-search input{border:0;outline:none;width:100%;color:#212529}
+.drive-actions .btn{border:1px solid #dee2e6;background:#fff;color:#212529;border-radius:20px;padding:6px 12px}
+.drive-actions .btn:hover{background:#f8f9fa;color:#0d6efd}
+.drive-actions .btn i{margin-right:6px}
+.drive-actions .btn-view{border-radius:8px}
+
+@media (max-width: 768px){
+.drive-topbar{flex-direction:column;gap:8px;padding:12px}
+.drive-topbar-left{width:100%;justify-content:space-between}
+.drive-topbar-right{width:100%;justify-content:space-between}
+.drive-search{min-width:auto;flex:1}
+.drive-breadcrumb{font-size:0.85em}
+}
+
+.drive-body{display:flex;gap:16px;margin-top:12px}
+.drive-sidebar{width:240px;border:1px solid #e9ecef;border-radius:8px;background:#fff;padding:8px}
+.drive-sidebar .nav-item{display:block;padding:8px 10px;border-radius:6px;color:#2e5d8b;text-decoration:none}
+.drive-sidebar .nav-item.active,.drive-sidebar .nav-item:hover{background:#f1f3f5;color:#0d6efd}
+.drive-sidebar .nav-section{margin:12px 8px 6px;color:#6c757d;font-size:.9rem;font-weight:600}
+.drive-sidebar .nav-subtle{margin:0 8px;color:#adb5bd;font-size:.85rem}
+
+.drive-content{flex:1;border:1px solid #e9ecef;border-radius:8px;background:#fff;padding:12px}
+
+@media (max-width: 992px){
+.drive-body{flex-direction:column}
+.drive-sidebar{width:100%;margin-bottom:16px}
+}
+
+/* Grid */
+.drive-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.tile{border:1px solid #e9ecef;border-radius:10px;padding:12px;background:#fff;position:relative;transition:box-shadow .2s,border-color .2s}
+.tile:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);border-color:#dee2e6}
+.tile-icon{font-size:22px;color:#f0ad4e;margin-bottom:6px}
+.tile-file .tile-icon{color:#6c757d}
+/* Type-specific accents */
+.tile-file.type-book .tile-icon{color:#198754}
+.tile-file.type-notes .tile-icon{color:#f0ad4e}
+.tile-file.type-video .tile-icon{color:#dc3545}
+.tile-file.type-presentation .tile-icon{color:#0dcaf0}
+.tile-file.type-code .tile-icon{color:#6c757d}
+.tile-file.type-other .tile-icon{color:#6c757d}
+.tile-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#6094e1}
+.tile-meta{color:#6c757d;font-size:.85rem;margin-top:2px}
+.tile-actions{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+.tile-actions .btn{border:1px solid #dee2e6;background:#fff;padding:2px 8px;border-radius:6px;color:#212529}
+.tile-actions .btn:hover{background:#f8f9fa;color:#0d6efd}
+
+@media (max-width: 768px){
+.drive-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.tile{padding:8px}
+.tile-name{font-size:0.9em}
+.tile-meta{font-size:0.75rem}
+}
+
+/* List */
+.drive-list{width:100%}
+.drive-list .list-head,.drive-list .list-row{display:grid;grid-template-columns:1fr 160px 160px 160px;gap:8px;align-items:center;padding:10px 8px}
+.drive-list .list-head{color:#6c757d;border-bottom:1px solid #e9ecef;font-weight:600}
+.drive-list .list-row{border-bottom:1px solid #f1f3f5;color:#212529}
+/* Type-specific rows */
+.drive-list .list-row.type-book i{color:#198754!important}
+.drive-list .list-row.type-notes i{color:#f0ad4e!important}
+.drive-list .list-row.type-video i{color:#dc3545!important}
+.drive-list .list-row.type-presentation i{color:#0dcaf0!important}
+.drive-list .list-row.type-code i{color:#6c757d!important}
+.drive-list .list-row.type-other i{color:#6c757d!important}
+.drive-list .list-row:hover{background:#f8f9fa}
+
+@media (max-width: 768px){
+.drive-list .list-head{display:none}
+.drive-list .list-row{grid-template-columns:1fr;gap:4px;padding:12px 8px;border:1px solid #e9ecef;border-radius:8px;margin-bottom:8px}
+.drive-list .list-row > *{display:block}
+}
+
+.d-none{display:none!important}
+

@@ -1,0 +1,101 @@
+<!-- Header Navigation -->
+<header class="bg-msu">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                🎓 МГУ ВМК Портал
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                           href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'schedule' in request.resolver_match.url_name %}active{% endif %}"
+                           href="{% url 'schedule' %}">
+                            <i class="fas fa-calendar-alt"></i> Расписание
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'materials' in request.resolver_match.url_name %}active{% endif %}"
+                           href="{% url 'materials_drive_root' %}">
+                            <i class="fas fa-book"></i> Материалы
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="navbar-nav">
+                    <button type="button" class="btn btn-outline-light me-2 theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+                        <i class="fas fa-sun theme-icon-sun"></i>
+                        <i class="fas fa-moon theme-icon-moon"></i>
+                    </button>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown">
+                            {% if user.photo %}
+                            <img src="{{ user.photo.url }}" class="profile-img me-2">
+                            {% else %}
+                            <i class="fas fa-user me-2"></i>
+                            {% endif %}
+                            {{ user.first_name }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'profile' %}">
+                                    <i class="fas fa-user"></i> Профиль
+                                </a>
+                            </li>
+                            {% if user.is_staff %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'admin:index' %}">
+                                    <i class="fas fa-cog"></i> Админка
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'logout' %}" class="d-inline">
+    {% csrf_token %}
+    <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; cursor: pointer;">
+        <i class="fas fa-sign-out-alt"></i> Выйти
+    </button>
+</form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </a>
+                    {% endif %}
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- Secondary Header -->
+<div class="bg-light border-bottom secondary-header">
+    <div class="container py-2">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <div class="mb-1 mb-md-0">
+                <small class="text-muted">
+                    <i class="fas fa-university"></i> Факультет вычислительной математики и кибернетики
+                </small>
+            </div>
+            <div>
+                <small class="text-muted">
+                    <i class="fas fa-map-marker-alt"></i> Москва, Ленинские горы, 1
+                </small>
+            </div>
+        </div>
+    </div>
+</div>

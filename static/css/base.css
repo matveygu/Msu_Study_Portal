@@ -1,0 +1,160 @@
+/* Base styles */
+* {
+    box-sizing: border-box;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #0039a6 !important;
+}
+
+.bg-msu {
+    background-color: #0039a6;
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card-hover:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s;
+}
+
+.news-card {
+    border-left: 4px solid #0039a6;
+}
+
+.quick-action {
+    transition: all 0.3s;
+    text-decoration: none;
+    color: inherit;
+}
+
+.quick-action:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+/* Footer styles */
+footer.bg-dark {
+    margin-top: auto;
+    color: #fff !important;
+}
+
+footer.bg-dark h5,
+footer.bg-dark p {
+    color: #fff !important;
+}
+
+/* Ensure proper spacing */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* Text contrast improvements */
+.text-light-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Secondary header styles */
+.secondary-header {
+    font-size: 0.9rem;
+}
+
+.secondary-header .text-muted {
+    color: #6c757d !important;
+}
+
+/* Navbar improvements */
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff !important;
+}
+
+.btn-outline-light {
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
+    color: #fff !important;
+}
+
+/* Responsive improvements */
+@media (max-width: 992px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .secondary-header {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    h4 {
+        font-size: 1.2rem;
+    }
+    
+    h5 {
+        font-size: 1.1rem;
+    }
+    
+    .secondary-header small {
+        font-size: 0.75rem;
+    }
+    
+    .navbar-collapse {
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .secondary-header {
+        display: none;
+    }
+}

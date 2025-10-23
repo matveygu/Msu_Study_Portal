@@ -1,0 +1,263 @@
+/* Faculties page styles */
+.faculties-container {
+    max-width: 1200px;
+}
+
+.faculty-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background: white;
+}
+
+.faculty-card:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.faculty-header {
+    background: linear-gradient(135deg, #0039a6 0%, #0053b3 100%);
+    color: white !important;
+    padding: 1.5rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: between;
+    align-items: center;
+}
+
+.faculty-header:hover {
+    background: linear-gradient(135deg, #002776 0%, #0039a6 100%);
+}
+
+.faculty-header-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.faculty-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-right: 1.5rem;
+    border-radius: 8px;
+    background: white;
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+.faculty-title h5 {
+    margin: 0;
+    font-weight: 500;
+    color: white !important;
+}
+
+.faculty-title small {
+    opacity: 0.9;
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.faculty-arrow {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.faculty-arrow.rotated {
+    transform: rotate(180deg);
+}
+
+.faculty-content {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.faculty-content.expanded {
+    max-height: 2000px;
+    padding: 2rem;
+}
+
+.faculty-description {
+    line-height: 1.6;
+    color: #495057;
+    margin-bottom: 1.5rem;
+}
+
+.faculty-info {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-top: 1.5rem;
+}
+
+.faculty-info h6 {
+    color: #0039a6;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.points-display {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #28a745;
+}
+
+.points-current {
+    border-left-color: #28a745;
+}
+
+.points-previous {
+    border-left-color: #17a2b8;
+}
+
+.points-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.points-label {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.points-percent {
+    font-size: 0.85em;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    background: #e9ecef;
+}
+
+.faculty-contact {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border-left: 4px solid #6c757d;
+}
+
+.faculty-contact h6 {
+    color: #0039a6;
+    margin-bottom: 0.5rem;
+}
+
+.faculty-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.stat-value {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #0039a6;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.login-promo {
+    background: linear-gradient(135deg, #0039a6 0%, #0053b3 100%);
+    color: white !important;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.login-promo h3,
+.login-promo p {
+    color: white !important;
+}
+
+.trend-up {
+    color: #28a745;
+}
+
+.trend-down {
+    color: #dc3545;
+}
+
+.trend-neutral {
+    color: #6c757d;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .faculty-header {
+        padding: 1rem;
+    }
+    
+    .faculty-header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .faculty-logo {
+        width: 60px;
+        height: 60px;
+        margin-right: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .faculty-title h5 {
+        font-size: 1.1rem;
+    }
+
+    .faculty-content.expanded {
+        padding: 1rem;
+    }
+
+    .faculty-info {
+        padding: 1rem;
+    }
+
+    .points-value {
+        font-size: 1.2em;
+    }
+
+    .faculty-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .faculty-logo {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .faculty-title h5 {
+        font-size: 1rem;
+    }
+    
+    .faculty-title small {
+        font-size: 0.75em;
+    }
+    
+    .login-promo {
+        padding: 1.5rem;
+    }
+}

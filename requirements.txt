@@ -1,0 +1,10 @@
+asgiref==3.9.1
+Django>=5.2.6,<6.0
+gunicorn
+pillow==11.3.0
+python-dotenv==1.1.1
+sqlparse==0.5.3
+tzdata==2025.2
+whitenoise==6.5.0
+gspread==6.2.1
+oauth2client==4.1.3

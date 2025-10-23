@@ -1,0 +1,142 @@
+/* Стили для главной страницы */
+.welcome-card {
+    background: linear-gradient(135deg, #0039a6 0%, #0053b3 100%);
+    color: white !important;
+    border: none;
+    border-radius: 15px;
+}
+
+.welcome-card h2 {
+    font-weight: 300;
+    color: white !important;
+}
+
+.welcome-card p {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+.quick-action-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+}
+
+.quick-action-card .card-body {
+    padding: 1.5rem;
+}
+
+.quick-action-card i {
+    margin-bottom: 1rem;
+}
+
+.news-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+}
+
+.news-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.useful-links .list-group-item {
+    border: none;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.useful-links .list-group-item:hover {
+    border-left-color: #0039a6;
+    background-color: #f8f9fa;
+}
+
+.schedule-alert {
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .quick-action-card .card-body {
+        padding: 1rem;
+    }
+
+    .quick-action-card i {
+        font-size: 2rem !important;
+    }
+}
+
+/* Стили для форм новостей */
+.news-form .form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.news-form .form-control:focus {
+    border-color: #0039a6;
+    box-shadow: 0 0 0 0.2rem rgba(0, 57, 166, 0.25);
+}
+
+.news-form textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.news-image-preview {
+    max-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для карточек новостей */
+.news-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.news-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.news-card .card-body {
+    padding: 1.5rem;
+}
+
+.news-meta {
+    font-size: 0.85em;
+    color: #6c757d;
+}
+
+.news-badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .news-card .card-body {
+        padding: 1rem;
+    }
+
+    .news-form .row {
+        margin-bottom: 0;
+    }
+
+    .news-form .col-md-6 {
+        margin-bottom: 1rem;
+    }
+}

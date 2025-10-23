@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Расписание на {{ day_name }} - МГУ ВМК{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>Расписание на {{ day_name }} - {{ user.group.name }}</h4>
+                <a href="{% url 'schedule' %}" class="btn btn-outline-secondary btn-sm">
+                    ← Назад ко всем дням
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 10%">№ пары</th>
+                            <th style="width: 15%">Время</th>
+                            <th style="width: 45%">Предмет / Преподаватель / Аудитория</th>
+                            <th style="width: 30%">Домашнее задание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lesson in schedule %}
+                        <tr>
+                            <td class="fw-bold">{{ lesson.lesson_number }}</td>
+                            <td>{{ lesson.time }}</td>
+                            <td>
+                                <div class="fw-bold">{{ lesson.subject.name }}</div>
+                                <div class="text-muted small">{{ lesson.subject.teacher.get_full_name }}</div>
+                                <div class="text-muted small">Ауд.: {{ lesson.classroom }}</div>
+                            </td>
+                            <td>
+                                {% if lesson.homework %}
+                                <div class="homework-content">
+                                    {{ lesson.homework }}
+                                    {% if user.role in 'headman teacher admin' %}
+                                    <button class="btn btn-sm btn-outline-secondary mt-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editHomeworkModal{{ lesson.id }}">
+                                        ✏️ Редактировать
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                {% if user.role in 'headman teacher admin' %}
+                                <button class="btn btn-sm btn-outline-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editHomeworkModal{{ lesson.id }}">
+                                    ➕ Добавить ДЗ
+                                </button>
+                                {% else %}
+                                <span class="text-muted">ДЗ не задано</span>
+                                {% endif %}
+                                {% endif %}
+
+                                <!-- Модальное окно редактирования ДЗ -->
+                                {% if user.role in 'headman teacher admin' %}
+                                <div class="modal fade" id="editHomeworkModal{{ lesson.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Домашнее задание</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form method="post" action="{% url 'add_homework' lesson.id %}">
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Предмет: {{ lesson.subject.name }}</label>
+                                                        <textarea name="homework" class="form-control"
+                                                                  rows="4" placeholder="Введите домашнее задание...">{{ lesson.homework }}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <p>Занятий на {{ day_name }} нет 🎉</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>

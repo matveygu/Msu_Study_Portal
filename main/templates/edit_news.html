@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редактировать новость - МГУ ВМК{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card news-form">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-edit"></i> Редактировать новость</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Информация о новости -->
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Автор:</strong> {{ news.author.get_full_name }}<br>
+                                <strong>Создана:</strong> {{ news.created_at|date:"d.m.Y H:i" }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Статус:</strong> 
+                                {% if news.is_published %}
+                                <span class="badge bg-success">Опубликовано</span>
+                                {% else %}
+                                <span class="badge bg-warning">Черновик</span>
+                                {% endif %}<br>
+                                <strong>Обновлена:</strong> {{ news.updated_at|date:"d.m.Y H:i" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Заголовок -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Заголовок новости</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="alert alert-danger mt-2">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Содержание -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Содержание</label>
+                            {{ form.content }}
+                            {% if form.content.errors %}
+                            <div class="alert alert-danger mt-2">{{ form.content.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Категория и изображение -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Категория</label>
+                                    {{ form.category }}
+                                    {% if form.category.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.category.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                        <label class="form-label fw-bold">Файл</label>
+                                    {{ form.file }}
+                                    {% if form.file.errors %}
+                                    <div class="alert alert-danger mt-2">{{ form.file.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Текущее изображение -->
+                        {% if news.image %}
+                        <div class="mb-3 p-3 border rounded">
+                            <label class="form-label fw-bold">Текущее изображение</label>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ news.image.url }}" alt="Текущее изображение" 
+                                     class="news-image-preview me-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="image-clear" id="image-clear">
+                                    <label class="form-check-label text-danger" for="image-clear">
+                                        Удалить изображение
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Публикация -->
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                {{ form.is_published }}
+                                <label class="form-check-label fw-bold" for="{{ form.is_published.id_for_label }}">
+                                    Опубликовать новость
+                                </label>
+                            </div>
+                            {% if form.is_published.errors %}
+                            <div class="alert alert-danger mt-2">{{ form.is_published.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Кнопки -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-3">
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-times"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Сохранить изменения
+                            </button>
+                            <button type="button" class="btn btn-danger" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Подтверждение удаления
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <h6>Вы собираетесь удалить новость:</h6>
+                    <p class="fw-bold mb-0">"{{ news.title }}"</p>
+                </div>
+                <p class="text-danger mb-0">
+                    <i class="fas fa-info-circle"></i> Это действие нельзя отменить!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+                <form method="post" action="{% url 'delete_news' news.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Удалить новость
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

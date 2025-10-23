@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль Пользователя</title>
+</head>
+<body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль - МГУ ВМК{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/profile.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container profile-container">
+    <div class="profile-card">
+        <div class="card-body">
+            <!-- Аватар и основная информация -->
+            <div class="text-center mb-4">
+                {% if user.photo %}
+                <img src="{{ user.photo.url }}" class="rounded-circle profile-avatar"
+                     alt="{{ user.get_full_name }}">
+                {% else %}
+                <div class="rounded-circle profile-avatar-placeholder">
+                    <i class="fas fa-user fa-2x text-white"></i>
+                </div>
+                {% endif %}
+
+                <h3 class="profile-name">{{ user.get_full_name }}</h3>
+                <p class="profile-role">
+                    <i class="fas fa-graduation-cap"></i>
+                    Студент {{ user.course }} курса
+                </p>
+            </div>
+
+            <!-- Информация о пользователе -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-card card mb-3">
+                        <div class="card-body">
+                            <h6><i class="fas fa-id-card"></i> Основная информация</h6>
+                            <hr>
+                            <p><strong>Номер студенческого:</strong><br>
+                            <span class="text-muted">{{ user.student_id }}</span></p>
+
+                            <p><strong>Факультет:</strong><br>
+                            <span class="text-muted">{{ user.faculty }}</span></p>
+
+                            <p><strong>Курс:</strong><br>
+                            <span class="text-muted">{{ user.course }} курс</span></p>
+
+                            <p><strong>Группа:</strong><br>
+                            <span class="text-muted">{{ user.group.name }}</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="info-card card mb-3">
+                        <div class="card-body">
+                            <h6><i class="fas fa-shield-alt"></i> Права доступа</h6>
+                            <hr>
+                            <p><strong>Роль:</strong><br>
+                            <span class="badge role-badge
+                                {% if user.role == 'admin' %}bg-danger
+                                {% elif user.role == 'teacher' %}bg-warning
+                                {% elif user.role == 'headman' %}bg-info
+                                {% else %}bg-secondary{% endif %}">
+                                {{ user.get_role_display }}
+                            </span></p>
+
+                            <p><strong>Статус:</strong><br>
+                            <span class="badge status-badge bg-success">Активный</span></p>
+
+                            <p><strong>Дата регистрации:</strong><br>
+                            <span class="text-muted">{{ user.date_joined|date:"d.m.Y" }}</span></p>
+
+                            <p><strong>Последний вход:</strong><br>
+                            <span class="text-muted">{{ user.last_login|date:"d.m.Y H:i" }}</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контактная информация -->
+            <div class="info-card card mb-4">
+                <div class="card-body">
+                    <h6><i class="fas fa-envelope"></i> Контактная информация</h6>
+                    <hr>
+                    <p><strong>Email:</strong><br>
+                    <span class="text-muted">
+                        {% if user.email %}
+                            {{ user.email }}
+                        {% else %}
+                            Не указан
+                        {% endif %}
+                    </span></p>
+
+                    <p><strong>Телефон:</strong><br>
+                    <span class="text-muted">Не указан</span></p>
+                </div>
+            </div>
+
+            <!-- Действия -->
+            <div class="d-grid gap-2">
+                <a href="#" class="btn btn-outline-primary profile-action-btn">
+                    <i class="fas fa-edit"></i> Редактировать профиль
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger profile-action-btn">
+                    <i class="fas fa-sign-out-alt"></i> Выйти из системы
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>
